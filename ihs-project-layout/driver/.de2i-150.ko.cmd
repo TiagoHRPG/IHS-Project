@@ -1,0 +1,1 @@
+cmd_/home/de2i-150/workspace/ihs-project-layout/driver/de2i-150.ko := ld -r -m elf_x86_64 --build-id=sha1  -T scripts/module.lds -o /home/de2i-150/workspace/ihs-project-layout/driver/de2i-150.ko /home/de2i-150/workspace/ihs-project-layout/driver/de2i-150.o /home/de2i-150/workspace/ihs-project-layout/driver/de2i-150.mod.o;  true
