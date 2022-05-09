@@ -1,5 +1,11 @@
 # IHS-Project
 
+## Install SFML
+
+```
+sudo apt-get install libsfml-dev
+```
+
 ## Running the code
 in order to run the code
 ```
