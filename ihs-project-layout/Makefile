@@ -21,7 +21,7 @@ OD     := $(PREFIX)objdump
 CFLAGS   := -Wall -I $(INCDIR) -MMD -MP
 CXXFLAGS := -Wall -I $(INCDIR) -MMD -MP
 ASMFLAGS := -f elf
-LDFLAGS  := -lsfml-graphics -lsfml-window -lsfml-system
+LDFLAGS  := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 ifeq ($(DEBUG),1)
 	BINDIR    := $(DBGDIR)
