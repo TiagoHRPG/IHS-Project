@@ -65,35 +65,35 @@ string char_to_stringbit(char n)
 	return result;
 }
 
-void writeLDisplay(int fd, int data)
+void writeLDisplay(int fd, unsigned int data)
 {
 	ioctl(fd, WR_L_DISPLAY);
 	write(fd, &data, sizeof(data));
 	//printk("wrote %d bytes\n", retval);
 }
 
-void writeRDisplay(int fd, int data)
+void writeRDisplay(int fd, unsigned int data)
 {
 	ioctl(fd, WR_R_DISPLAY);
 	write(fd, &data, sizeof(data));
 	//printk("wrote %d bytes\n", retval);
 }
 
-void writeGreenLed(int fd, int data)
+void writeGreenLed(int fd, unsigned int data)
 {
 	ioctl(fd, WR_GREEN_LEDS);
 	write(fd, &data, sizeof(data));
 	// printk("wrote %d bytes\n", retval);
 }
 
-void writeRedLed(int fd, int data)
+void writeRedLed(int fd, unsigned int data)
 {
 	ioctl(fd, WR_RED_LEDS);
 	write(fd, &data, sizeof(data));
 	// printk("wrote %d bytes\n", retval);
 }
 
-int readButton(int fd, int data)
+unsigned int readButton(int fd, unsigned int data)
 {
 	ioctl(fd, RD_PBUTTONS);
 	read(fd, &data, 1);
@@ -102,7 +102,7 @@ int readButton(int fd, int data)
 	return data;
 }
 
-int readSwitch(int fd, int data)
+unsigned int readSwitch(int fd, unsigned int data)
 {
 	ioctl(fd, RD_SWITCHES);
 	read(fd, &data, 3);
@@ -283,12 +283,14 @@ int main(int argc, char **argv)
 
 	unsigned int data = 0x40404079;
 	unsigned int switches = 0x00000;
-	unsigned int oldSwitches = 0x00000;
+	unsigned int oldSwitches = 0x0AA15;
 	unsigned int buttons = 0x0;
-	unsigned int greenLeds = 0x00000;
-	unsigned int redLeds = 0x0;
+	unsigned int greenLeds = 0x0;
+	unsigned int redLeds = 0x00000;
 
 	unsigned int temp;
+	int i, j;
+	int flag = 1;
 
 	unsigned int seconds;
 	string sec_string, min_string;
@@ -334,247 +336,303 @@ int main(int argc, char **argv)
 			}
 		}
 
-		switch (screen)
-		{
-		case 0:
-			// Reading from buttons
-			//ioctl(fd, RD_PBUTTONS);
-			//read(fd, &buttons, 1);
-			
-			if (buttons == 0b1110)
-			{
-				window.clear(sf::Color::Green);
-				screen = 2;
-
-				data = 0b0001;
-				//ioctl(fd, WR_RED_LEDS);
-				//write(fd, &data, sizeof(data));
-			}
-			break;
-
-		case 1:
-			// text appering
-			
-			elapsedtime_text += clock_text.restart();
-			while (elapsedtime_text >= sf::seconds(.1f))
-			{
-				elapsedtime_text -= sf::seconds(.1f);
-				if (typedtext.getSize() > 0)
+		switch (screen) {
+			case 0:
+				// Reading from buttons
+				//ioctl(fd, RD_PBUTTONS);
+				//read(fd, &buttons, 1);
+				
+				if (buttons == 0b1110)
 				{
-					text.setString(text.getString() + typedtext[0]);
-					typedtext = typedtext.toAnsiString().substr(1);
+					window.clear(sf::Color::Green);
+					screen = 2;
 
-					temp_clock.restart();
+					data = 0b0001;
+					//ioctl(fd, WR_RED_LEDS);
+					//write(fd, &data, sizeof(data));
 				}
-				//when text ends, screen needs to change
-				else
+				break;
+
+			case 1:
+				// text appering
+				
+				elapsedtime_text += clock_text.restart();
+				while (elapsedtime_text >= sf::seconds(.001f))
 				{
-					temp_time = temp_clock.getElapsedTime();
-					//wait 5 seconds to go to screen 2
-
-					if (temp_time >= sf::seconds(5.0f))
+					elapsedtime_text -= sf::seconds(.001f);
+					if (typedtext.getSize() > 0)
 					{
-						screen = 2;
+						text.setString(text.getString() + typedtext[0]);
+						typedtext = typedtext.toAnsiString().substr(1);
 
-						text.setString("");
-						typedtext.insert(0, "Voce deveria saber matematica");
+						temp_clock.restart();
+					}
+					//when text ends, screen needs to change
+					else
+					{
+						temp_time = temp_clock.getElapsedTime();
+						//wait 5 seconds to go to screen 2
 
-						clock_text.restart();
-						clock_bomb.restart();
+						if (temp_time >= sf::seconds(5.0f))
+						{
+							screen = 2;
+
+							text.setString("");
+							typedtext.insert(0, "Voce deveria saber matematica");
+
+							clock_text.restart();
+							clock_bomb.restart();
+						}
 					}
 				}
-			}
-			window.draw(text);
-			window.display();
-			break;
+				window.draw(text);
+				break;
 
-		case 2:
-
-			//screen interface
-			elapsedtime_text += clock_text.restart();
-			while (elapsedtime_text >= sf::seconds(.1f))
-			{
-				elapsedtime_text -= sf::seconds(.1f);
-				if (typedtext.getSize() > 0)
+			case 2:
+				//screen interface
+				elapsedtime_text += clock_text.restart();
+				while (elapsedtime_text >= sf::seconds(.1f))
 				{
-					text.setString(text.getString() + typedtext[0]);
-					typedtext = typedtext.toAnsiString().substr(1);
+					elapsedtime_text -= sf::seconds(.1f);
+					if (typedtext.getSize() > 0)
+					{
+						text.setString(text.getString() + typedtext[0]);
+						typedtext = typedtext.toAnsiString().substr(1);
+					}
 				}
-			}
-			window.draw(text);
-			window.display();
+				window.draw(text);
 
-			// fpga and program logic
+				// fpga and program logic
 
-			data = 0xC0C0B082;
-			writeRDisplay(fd, data);
-			switches = readSwitch(fd, switches);
+				data = 0xC0C0B082;
+				writeRDisplay(fd, data);
+				switches = readSwitch(fd, switches);
 
-			// Answer: 001 010 101 000 010 101 (0x0AA15)
-
-			if (switches == 0x24) // 36 em hexa
-			{
-				text.setString("");
-				typedtext.insert(0, "Isso faz algum sentido?");
-				screen = 3;
-
-				writeRedLed(fd, 0b0011);
-			}
-			break;
-		case 3:
-			//screen interface
-			elapsedtime_text += clock_text.restart();
-			while (elapsedtime_text >= sf::seconds(.1f))
-			{
-				elapsedtime_text -= sf::seconds(.1f);
-				if (typedtext.getSize() > 0)
+				if (switches == 0x24) // 36 em hexa
 				{
-					text.setString(text.getString() + typedtext[0]);
-					typedtext = typedtext.toAnsiString().substr(1);
+					text.setString("");
+					typedtext.insert(0, "Isso faz algum sentido?");
+					screen = 3;
+					window.clear();
 				}
-			}
-			window.draw(text);
-
-			// shapes
-			window.draw(square1);
-			window.draw(square2);
-			window.draw(square3);
-			window.draw(square4);
-			window.draw(square5);
-			window.draw(square6);
-			window.draw(square7);
-			window.draw(square8);
-			window.draw(square9);
-			window.draw(square10);
-			window.draw(square11);
-			window.draw(square12);
-			window.draw(square13);
-			window.draw(square14);
-			window.draw(square15);
-			window.draw(square16);
-			window.draw(square17);
-			window.draw(square18);
-
-			window.display();
+				break;
 			
-			//fpga and program logic
-
-			switches = readSwitch(fd, switches);
-
-			if(switches == 0x0AA15){
-				text.setString("");
-				typedtext.insert(0, "Quarta fase");
-				screen = 4;
-
-				writeRedLed(fd, 0xFFFF);
-
-			}
-		case 4:
-		{
-			//screen interface
-			elapsedtime_text += clock_text.restart();
-			while (elapsedtime_text >= sf::seconds(.1f))
-			{
-				elapsedtime_text -= sf::seconds(.1f);
-				if (typedtext.getSize() > 0)
+			case 3:
+				//screen interface
+				elapsedtime_text += clock_text.restart();
+				while (elapsedtime_text >= sf::seconds(.1f))
 				{
-					text.setString(text.getString() + typedtext[0]);
-					typedtext = typedtext.toAnsiString().substr(1);
+					elapsedtime_text -= sf::seconds(.1f);
+					if (typedtext.getSize() > 0)
+					{
+						text.setString(text.getString() + typedtext[0]);
+						typedtext = typedtext.toAnsiString().substr(1);
+					}
 				}
-			}
-			window.draw(text);
+				window.draw(text);
 
-			//switches = readSwitch(fd, switches);
+				// shapes
+				window.draw(square1);
+				window.draw(square2);
+				window.draw(square3);
+				window.draw(square4);
+				window.draw(square5);
+				window.draw(square6);
+				window.draw(square7);
+				window.draw(square8);
+				window.draw(square9);
+				window.draw(square10);
+				window.draw(square11);
+				window.draw(square12);
+				window.draw(square13);
+				window.draw(square14);
+				window.draw(square15);
+				window.draw(square16);
+				window.draw(square17);
+				window.draw(square18);
+				
+				//fpga and program logic
 
-			// Ask to reset all switches to 0
-			if (switches != 0x00000)
+				switches = readSwitch(fd, switches);
+
+				writeRedLed(fd, switches);
+
+				// Answer: 001 010 101 000 010 101 (0x0AA15)
+				if(switches == 0x0AA15){
+					text.setString("");
+					typedtext.insert(0, "Quarta fase");
+					screen = 4;
+					temp_clock.restart();
+					i = 0;
+					flag = 1;
+
+					writeGreenLed(fd, 0x0);
+				}
+				break;
+			
+			case 5:
 			{
+				//screen interface
+				elapsedtime_text += clock_text.restart();
+				while (elapsedtime_text >= sf::seconds(.1f))
+				{
+					elapsedtime_text -= sf::seconds(.1f);
+					if (typedtext.getSize() > 0)
+					{
+						text.setString(text.getString() + typedtext[0]);
+						typedtext = typedtext.toAnsiString().substr(1);
+					}
+				}
+				window.draw(text);
+
+				switches = readSwitch(fd, switches);
+
+				// Compare old state with current one to create a mask
+				unsigned int mask = switches ^ oldSwitches;
+				printf("mask: %p\n", mask);
+
+				if(mask != 0){
+					for (int i = 5; i >= 0; i--)
+					{
+						for (int j = 2; j >= 0; j--)
+						{
+							temp = (mask % 2);
+							mask = mask >> 1;
+
+							// The mask will diffuse itself to surrounding cells, inverting them
+							if (temp == 1)
+							{
+								currMatrix[i*3 + j] ^= 1;
+								if (i > 0) // up
+									currMatrix[(i - 1) * 3 + j] ^= 1;
+								if (i < 5) // down
+									currMatrix[(i + 1) * 3 + j] ^= 1;
+								if (j > 0) // left
+									currMatrix[i * 3 + (j - 1)] ^= 1;
+								if (j < 2) // right
+									currMatrix[i * 3 + (j + 1)] ^= 1;
+							}
+						}
+					}
+
+					// Save current matrix state for next iteration and pass it to red leds
+					redLeds = 0x00000;
+					int pot = 0;
+					
+					for (int i = 5; i >= 0; i--)
+					{
+						for (int j = 2; j >= 0; j--)
+						{
+							pot = 17 - (i * 3 + j); // The number to elevate 2 by
+							for(int m = 1; m <= pot; ++m)
+								redLeds += currMatrix[i * 3 + j] * m;
+
+						}
+					}
+
+					printf("redLeds: %p\n", redLeds);
+					writeRedLed(fd, redLeds);
+					
+					oldSwitches = redLeds;
+				}
+
+
 				/*
-					TODO: print warning to reset all switches on screen
+					TODO: pass matrix to screen
 					*/
+
+				if (switches == 0x3FFFF)
+				{ // All on
+					window.clear(sf::Color::Green);
+					screen = 5;
+
+					// writeGreenLed(fd, 0b1111);
+				}
 				break;
 			}
+			case 4:{
+				//screen interface
 
-			// Compare old state with current one to create a mask
-			unsigned int mask = switches ^ oldSwitches;
 
-			for (int i = 5; i >= 0; i--)
-			{
-				for (int j = 2; j >= 0; j--)
-				{
-					temp = (mask % 2);
-					mask >> 1;
+				// Genius
+				
+				int seqGreenLeds[4] = {16, 4, 64, 1}; // 2^4, 2^2, 2^6, 2^0
+				
 
-					// The mask will diffuse itself to surrounding cells, inverting them
-					if (temp == 1)
-					{
-						if (i > 0)
-							currMatrix[(i - 1) * 3 + j] ^= 1;
-						if (i < 5)
-							currMatrix[(i + 1) * 3 + j] ^= 1;
-						if (j > 0)
-							currMatrix[i * 3 + (j - 1)] ^= 1;
-						if (j < 2)
-							currMatrix[i * 3 + (j + 1)] ^= 1;
+				temp_time = temp_clock.getElapsedTime();
+				if(temp_time >= sf::seconds(1.5f) && i < 4 && flag){
+					temp_clock.restart();
+					writeGreenLed(fd, seqGreenLeds[i]);
+					i++;
+				}
+				else if (i >= 4 && flag && temp_time >= sf::seconds(1.5f)){
+					flag = 0;
+					writeGreenLed(fd, 0x0);
+					i = 0;
+				}
+
+				int answer[4] = {0xB, 0xD, 0x7, 0xE}; // 11, 13, 7, 14
+				int input[4];
+				int button = readButton(fd, button);
+				int old_button = 0xF;
+
+				if(button != 0xF && button != old_button && j < 4){
+					old_button = button;
+					input[j] = button;
+					j++;
+				}
+
+				
+				if (j >= 4){
+					char *str;
+					sprintf(str, "%d %d %d %d", input[3], input[2], input[1], input[0]);
+					text.setString(str);
+					window.draw(text);
+					window.display();
+					for (int k = 0; k < 4; k++){
+						if(answer[k] != input[k]){
+							screen = 6;
+							text.setString("");
+							typedtext.insert(0, "BOOM!!!");
+
+							clock_text.restart();
+							break;
+						}
 					}
 				}
-			}
+				
 
-			// Save current matrix state for next iteration and pass it to green leds
-			greenLeds = 0x00000;
-			int k = 1;
-			for (int i = 5; i >= 0; i--)
-			{
-				for (int j = 2; j >= 0; j--)
+
+				break;
+			}
+			case 6:
+
+
+				// Perdeu :(
+
+				//screen interface
+				elapsedtime_text += clock_text.restart();
+				while (elapsedtime_text >= sf::seconds(.1f))
 				{
-					greenLeds += currMatrix[i * 3 + j] * k;
-					k *= 2;
+					elapsedtime_text -= sf::seconds(.1f);
+					if (typedtext.getSize() > 0)
+					{
+						text.setString(text.getString() + typedtext[0]);
+						typedtext = typedtext.toAnsiString().substr(1);
+					}
 				}
-			}
-			//writeGreenLed(fd, greenLeds);
-			oldSwitches = greenLeds;
+				window.draw(text);
+				break;
 
-			/*
-				TODO: pass matrix to screen
-				*/
-
-			if (switches == 0x3FFFF)
-			{ // All on
-				window.clear(sf::Color::Green);
-				screen = 5;
-
-				//writeRedLed(fd, 0b1111);
-			}
-			break;
+			default:
+				break;
+				// Ih, entrou no vazio
 		}
-		case 5:
-			// Venceu porra :)
 
-			break;
-
-		case 6:
-			// Perdeu :(
-
-			//screen interface
-			elapsedtime_text += clock_text.restart();
-			while (elapsedtime_text >= sf::seconds(.1f))
-			{
-				elapsedtime_text -= sf::seconds(.1f);
-				if (typedtext.getSize() > 0)
-				{
-					text.setString(text.getString() + typedtext[0]);
-					typedtext = typedtext.toAnsiString().substr(1);
-				}
-			}
-			window.draw(text);
-			window.display();
-			break;
-
-		default:
-			break;
-			// Ih, entrou no vazio
-		}
+		window.display();
 	}
+
+	
 
 	//close(fd);
 }
