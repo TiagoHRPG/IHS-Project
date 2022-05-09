@@ -185,6 +185,9 @@ int main(int argc, char **argv)
 		cout << "Error during audio file import" << endl;
 	}
 
+	// to use this music file uncomment the code bellow
+	// typing.play();
+
 	sf::String typedtext = "Ola, vejo que voce encontrou minha caixa...\n\nEspero (ou nao) que voce consiga completar\nos desafios que preparei para hoje.\n\nMas cuidado com o tempo e tente nao perder\na cabeca!!\n\nASS ?";
 
 	sf::String challenge1_string = "Voce deveria saber matematica";
