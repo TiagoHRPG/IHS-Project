@@ -18,4 +18,16 @@
 #define HEX_E 0xFFFFFF86
 #define HEX_F 0xFFFFFF8E
 
+#define BIN_0 "1000000"
+#define BIN_1 "1111001"
+#define BIN_2 "0100100"
+#define BIN_3 "0110000"
+#define BIN_4 "0011001"
+#define BIN_5 "0010010"
+#define BIN_6 "0000010"
+#define BIN_7 "1111000"
+#define BIN_8 "0000000"
+#define BIN_9 "0010000"
+
+
 #endif /* __DISPLAY_H__ */

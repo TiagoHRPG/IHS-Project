@@ -7,6 +7,7 @@
 #include <fcntl.h>	/* open() */
 #include <sys/ioctl.h>	/* ioctl() */
 #include <errno.h>	/* error codes */
+#include <bitset>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -18,8 +19,80 @@
 
 using namespace std;
 
-
+#include "display.h"
 #include "ioctl_cmds.h"
+
+string char_to_stringbit(char n){
+	string result;
+	switch(n){
+		case '0': 
+			result = BIN_0;
+			break;
+		case '1': 
+			result = BIN_1;
+			break;
+		case '2': 
+			result = BIN_2;		
+			break;
+		case '3': 
+			result = BIN_3;
+			break;
+		case '4': 
+			result = BIN_4;
+			break;
+		case '5': 
+			result = BIN_5;
+			break;
+		case '6': 
+			result = BIN_6;
+			break;
+		case '7': 
+			result = BIN_7;
+			break;
+		case '8': 
+			result = BIN_8;
+			break;
+		case '9': 
+			result = BIN_9;
+			break;
+		default:
+			result = "";
+	}
+
+	return result;
+}
+
+void string_to_display(string min_string, string sec_string){
+	string bit_string = "";
+	bit_string += char_to_stringbit(sec_string[0]);
+	bit_string += char_to_stringbit(sec_string[1]);
+	bit_string += char_to_stringbit(min_string[0]);
+	bit_string += char_to_stringbit(min_string[1]);
+
+	unsigned long int data;
+
+	data = bitset<28>(bit_string).to_ulong();
+
+	//writeLDisplay(fd, data);
+	
+}
+
+
+void int_to_string(int number, string &min_string, string &sec_string){
+    unsigned int minutes = number / 60;
+    unsigned int seconds = number % 60;
+
+    if(seconds < 10){
+		sec_string = "0" + to_string(seconds);
+	}
+	else{
+		sec_string = to_string(seconds);
+	}
+    min_string = "0" + to_string(minutes);
+
+	string_to_display(sec_string, min_string);
+
+}
 
 void writeLDisplay(int fd, int data){
 	// ioctl(fd, WR_L_DISPLAY);
@@ -83,8 +156,16 @@ int main(int argc, char** argv){
 	sf::Font font;
     font.loadFromFile("../fonts/Hack-Regular.ttf");
 
-    sf::Text menu_text("", font, 30);
-    menu_text.setFillColor(sf::Color(14, 107, 14));
+    sf::Text text("", font, 30);
+    text.setFillColor(sf::Color(14, 107, 14));
+
+	sf::Text timer_text;
+    timer_text.setFont(font);
+    timer_text.setPosition(200, 200);
+    timer_text.setCharacterSize(30);
+    timer_text.setFillColor(sf::Color::White);
+
+
 
     sf::Text challenge1_text("", font, 30);
     challenge1_text.setFillColor(sf::Color(14, 107, 14));
@@ -94,11 +175,14 @@ int main(int argc, char** argv){
     sf::String challenge1_string = "Voce deveria saber matematica";
 
 	//time variables
-	sf::Clock clock_menu_text;
-    sf::Time elapsedtime_menu_text;
+	sf::Clock clock_text;
+    sf::Time elapsedtime_text;
 
     sf::Clock temp_clock;
     sf::Time temp_time;
+
+	sf::Clock clock_bomb;
+	sf::Time time_bomb;
 
 	//context variables
 
@@ -112,6 +196,9 @@ int main(int argc, char** argv){
 	unsigned int redLeds = 0x0;
 
 	unsigned int temp;
+
+	unsigned int seconds;
+	string sec_string, min_string;
 	
 	int currMatrix[18];
 
@@ -126,6 +213,24 @@ int main(int argc, char** argv){
 			}
 		}
 		window.clear();
+
+		if (screen != 1 && screen != 6){
+			//timer interface
+			time_bomb = clock_bomb.getElapsedTime();
+			seconds = 300 - time_bomb.asSeconds();
+			int_to_string(seconds, min_string, sec_string);
+			timer_text.setString(min_string + ":" + sec_string);
+			window.draw(timer_text);
+
+			if (seconds <= 0){
+				screen = 6; //fim de jogo
+				text.setString("");
+				typedtext.insert(0, "BOOM!!!");
+
+				clock_text.restart();
+			}
+		}
+
 
 		switch(screen){
 			case 0:
@@ -145,11 +250,11 @@ int main(int argc, char** argv){
 
 			case 1:
 				// text appering
-				elapsedtime_menu_text += clock_menu_text.restart();
-				while(elapsedtime_menu_text >= sf::seconds(.1f)){
-					elapsedtime_menu_text -= sf::seconds(.1f);
+				elapsedtime_text += clock_text.restart();
+				while(elapsedtime_text >= sf::seconds(.1f)){
+					elapsedtime_text -= sf::seconds(.1f);
 					if(typedtext.getSize() > 0){
-						menu_text.setString(menu_text.getString() + typedtext[0]);
+						text.setString(text.getString() + typedtext[0]);
 						typedtext = typedtext.toAnsiString().substr(1);
 
 
@@ -162,27 +267,32 @@ int main(int argc, char** argv){
 						
 						if (temp_time >= sf::seconds(5.0f)){
 							screen = 2;
-							clock_menu_text.restart();
-							menu_text.setString("");
+							
+							text.setString("");
 							typedtext.insert(0, "Voce deveria saber matematica");
+
+							clock_text.restart();
+							clock_bomb.restart();
 						}
 					}
 				}
-				window.draw(menu_text);
+				window.draw(text);
 				window.display();
 				break;
 
 			case 2:
+				
+
 				//screen interface
-				elapsedtime_menu_text += clock_menu_text.restart();
-				while(elapsedtime_menu_text >= sf::seconds(.1f)){
-					elapsedtime_menu_text -= sf::seconds(.1f);
+				elapsedtime_text += clock_text.restart();
+				while(elapsedtime_text >= sf::seconds(.1f)){
+					elapsedtime_text -= sf::seconds(.1f);
 					if(typedtext.getSize() > 0){
-						menu_text.setString(menu_text.getString() + typedtext[0]);
+						text.setString(text.getString() + typedtext[0]);
 						typedtext = typedtext.toAnsiString().substr(1);
 					}
 				}
-				window.draw(menu_text);
+				window.draw(text);
 				window.display();
 
 				// fpga and program logic
@@ -190,7 +300,7 @@ int main(int argc, char** argv){
 
 				// Answer: 001 010 101 000 010 101 (0x0AA15)
 				if(switches == 0x0AA15){
-					window.clear(sf::Color::Green);
+					window.clear();
 					screen = 3;
 
 					//writeRedLed(fd, 0b0011);
@@ -258,10 +368,24 @@ int main(int argc, char** argv){
 			}
 			case 5:
 				// Venceu porra :)
+
+				
 				break;
 
 			case 6:
 				// Perdeu :(
+
+				//screen interface
+				elapsedtime_text += clock_text.restart();
+				while(elapsedtime_text >= sf::seconds(.1f)){
+					elapsedtime_text -= sf::seconds(.1f);
+					if(typedtext.getSize() > 0){
+						text.setString(text.getString() + typedtext[0]);
+						typedtext = typedtext.toAnsiString().substr(1);
+					}
+				}
+				window.draw(text);
+				window.display();
 				break;
 
 			default:
