@@ -166,89 +166,100 @@ int main(int argc, char **argv)
 
 	// shapes
 	sf::CircleShape square1(30, 4);
-	square1.setFillColor(sf::Color::Magenta);
+	square1.setFillColor(sf::Color(108, 222, 153));
 	square1.setPosition(20.f, 50.f);
 
 	sf::CircleShape square2(30, 4);
-	square2.setFillColor(sf::Color::Magenta);
+	square2.setFillColor(sf::Color(108, 222, 153));
 	square2.setPosition(100.f, 50.f);
 
 	sf::CircleShape square3(30, 4);
-	square3.setFillColor(sf::Color::Blue);
+	square3.setFillColor(sf::Color(254, 0, 0));
 	square3.setPosition(180.f, 50.f);
 
+	/*---*/
+
 	sf::CircleShape square4(30, 4);
-	square4.setFillColor(sf::Color::Magenta);
-	square4.setPosition(20.f, 120.f);
+	square4.setFillColor(sf::Color(108, 222, 153));
+	square4.setPosition(260.f, 50.f);
 
 	sf::CircleShape square5(30, 4);
-	square5.setFillColor(sf::Color::Blue);
-	square5.setPosition(100.f, 120.f);
+	square5.setFillColor(sf::Color(254, 0, 0));
+	square5.setPosition(340.f, 50.f);
 
 	sf::CircleShape square6(30, 4);
-	square6.setFillColor(sf::Color::Magenta);
-	square6.setPosition(180.f, 120.f);
+	square6.setFillColor(sf::Color(108, 222, 153));
+	square6.setPosition(420.f, 50.f);
+
+
+	/*---*/
 
 	sf::CircleShape square7(30, 4);
-	square7.setFillColor(sf::Color::Blue);
+	square7.setFillColor(sf::Color(254, 0, 0));
 	square7.setPosition(20.f, 190.f);
 
 	sf::CircleShape square8(30, 4);
-	square8.setFillColor(sf::Color::Magenta);
+	square8.setFillColor(sf::Color(108, 222, 153));
 	square8.setPosition(100.f, 190.f);
 
 	sf::CircleShape square9(30, 4);
-	square9.setFillColor(sf::Color::Blue);
+	square9.setFillColor(sf::Color(254, 0, 0));
 	square9.setPosition(180.f, 190.f);
 
+
+	/*---*/
+
 	sf::CircleShape square10(30, 4);
-	square10.setFillColor(sf::Color::Magenta);
-	square10.setPosition(20.f, 260.f);
+	square10.setFillColor(sf::Color(108, 222, 153));
+	square10.setPosition(260.f, 190.f);
 
 	sf::CircleShape square11(30, 4);
-	square11.setFillColor(sf::Color::Magenta);
-	square11.setPosition(100.f, 260.f);
+	square11.setFillColor(sf::Color(108, 222, 153));
+	square11.setPosition(340.f, 190.f);
 
 	sf::CircleShape square12(30, 4);
-	square12.setFillColor(sf::Color::Magenta);
-	square12.setPosition(180.f, 260.f);
+	square12.setFillColor(sf::Color(108, 222, 153));
+	square12.setPosition(420.f, 190.f);
+
+
+	/*---*/
 
 	sf::CircleShape square13(30, 4);
-	square13.setFillColor(sf::Color::Magenta);
+	square13.setFillColor(sf::Color(108, 222, 153));
 	square13.setPosition(20.f, 330.f);
 
 	sf::CircleShape square14(30, 4);
-	square14.setFillColor(sf::Color::Blue);
+	square14.setFillColor(sf::Color(254, 0, 0));
 	square14.setPosition(100.f, 330.f);
 
 	sf::CircleShape square15(30, 4);
-	square15.setFillColor(sf::Color::Magenta);
+	square15.setFillColor(sf::Color(108, 222, 153));
 	square15.setPosition(180.f, 330.f);
 
+
+	/*---*/
+
 	sf::CircleShape square16(30, 4);
-	square16.setFillColor(sf::Color::Blue);
-	square16.setPosition(20.f, 400.f);
+	square16.setFillColor(sf::Color(254, 0, 0));
+	square16.setPosition(260.f, 330.f);
 
 	sf::CircleShape square17(30, 4);
-	square17.setFillColor(sf::Color::Magenta);
-	square17.setPosition(100.f, 400.f);
+	square17.setFillColor(sf::Color(108, 222, 153));
+	square17.setPosition(340.f, 330.f);
 
 	sf::CircleShape square18(30, 4);
-	square18.setFillColor(sf::Color::Blue);
-	square18.setPosition(180.f, 400.f);
+	square18.setFillColor(sf::Color(254, 0, 0));
+	square18.setPosition(420.f, 330.f);
 
 
 	window.setFramerateLimit(12);
 
 	//text variables
 	sf::Font font;
-	font.loadFromFile("/home/de2i-150/Desktop/Projeto-IHS/IHS-Project/ihs-project-layout/app/fonts/Hack-Regular.ttf");
+	font.loadFromFile("/home/de2i-150/Desktop/Projeto-IHS/IHS-Project/ihs-project-layout/app/fonts/cour.ttf");
 
-	sf::Text text("", font, 16);
+	sf::Text text("", font, 20);
 	text.setFillColor(sf::Color(39, 225, 122));
-
-	sf::Text challenge1_text("", font, 16);
-	challenge1_text.setFillColor(sf::Color(39, 225, 122));
 
 	sf::Music typing;
 
@@ -405,7 +416,7 @@ int main(int argc, char **argv)
 					data = 0x0;
 					writeRDisplay(fd, data);
 					text.setString("");
-					typedtext.insert(0, "Isso faz algum sentido?");
+					typedtext.insert(0, "[root@mbois ~] $ Isso faz algum sentido?");
 					screen = 3;
 					window.clear();
 				}
@@ -454,7 +465,7 @@ int main(int argc, char **argv)
 				// Answer: 001 010 101 000 010 101 (0x0AA15)
 				if(switches == 0x0AA15){
 					text.setString("");
-					typedtext.insert(0, "Tem alguma coisa piscando,\nvoce deveria prestar atencao");
+					typedtext.insert(0, "[root@mbois ~] $ Tem alguma coisa piscando\n\n[root@mbois ~] $ voce deveria prestar atencao");
 					screen = 4;
 					temp_clock.restart();
 					i = 0;
@@ -612,7 +623,7 @@ int main(int argc, char **argv)
 					if(flag_correct){
 						screen = 5;
 						text.setString("");
-						typedtext.insert(0, "Quinta fase");
+						typedtext.insert(0, "Quarta fase");
 						clock_text.restart();
 					}
 				}
