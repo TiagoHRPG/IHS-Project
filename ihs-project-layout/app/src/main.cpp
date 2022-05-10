@@ -23,6 +23,9 @@ using namespace std;
 #include "ioctl_cmds.h"
 
 
+#define BUTTON_AMOUNT 6
+
+
 string char_to_stringbit(char n)
 {
 	string result;
@@ -241,17 +244,11 @@ int main(int argc, char **argv)
 	sf::Font font;
 	font.loadFromFile("/home/de2i-150/Desktop/Projeto-IHS/IHS-Project/ihs-project-layout/app/fonts/Hack-Regular.ttf");
 
-	sf::Text text("", font, 30);
-	text.setFillColor(sf::Color(14, 107, 14));
+	sf::Text text("", font, 16);
+	text.setFillColor(sf::Color(39, 225, 122));
 
-	sf::Text timer_text;
-	timer_text.setFont(font);
-	timer_text.setPosition(200, 200);
-	timer_text.setCharacterSize(30);
-	timer_text.setFillColor(sf::Color::White);
-
-	sf::Text challenge1_text("", font, 30);
-	challenge1_text.setFillColor(sf::Color(14, 107, 14));
+	sf::Text challenge1_text("", font, 16);
+	challenge1_text.setFillColor(sf::Color(39, 225, 122));
 
 	sf::Music typing;
 
@@ -263,9 +260,9 @@ int main(int argc, char **argv)
 	// to use this music file uncomment the code bellow
 	// typing.play();
 
-	sf::String typedtext = "Ola, vejo que voce encontrou minha caixa...\n\nEspero (ou nao) que voce consiga completar\nos desafios que preparei para hoje.\n\nMas cuidado com o tempo e tente nao perder\na cabeca!!\n\nASS ?";
+	sf::String typedtext = "[root@mbois ~] $ Ola, vejo que voce encontrou minha caixa...\n\n[root@mbois ~] $ Espero (ou nao) que voce consiga completar\nos desafios que preparei para hoje.\n\n[root@mbois ~] $ Mas cuidado com o tempo e tente nao perder\na cabeca!!\n\n[root@mbois ~] $ ASS ?";
 
-	sf::String challenge1_string = "Voce deveria saber matematica";
+	sf::String challenge1_string = "[root@mbois ~] $ Voce deveria saber matematica";
 
 	//time variables
 	sf::Clock clock_text;
@@ -290,7 +287,11 @@ int main(int argc, char **argv)
 
 	unsigned int temp;
 	int i, j;
+	int old_button = 0xF;
 	int flag = 1;
+	int flag_correct = 1;
+	int input[BUTTON_AMOUNT];
+
 
 	unsigned int seconds;
 	string sec_string, min_string;
@@ -310,7 +311,7 @@ int main(int argc, char **argv)
 				window.close();
 			}
 		}
-		window.clear();
+		window.clear(sf::Color(48, 49, 52));
 
 		if(screen == 0){
 			typing.play();
@@ -322,9 +323,7 @@ int main(int argc, char **argv)
 			//timer interface
 			time_bomb = clock_bomb.getElapsedTime();
 			seconds = 300 - time_bomb.asSeconds();
-			int_to_string(fd, seconds, min_string, sec_string);
-			timer_text.setString(min_string + ":" + sec_string);
-			window.draw(timer_text);
+			int_to_string(fd, seconds, min_string, sec_string);		
 
 			if (seconds <= 0)
 			{
@@ -337,23 +336,14 @@ int main(int argc, char **argv)
 		}
 
 		switch (screen) {
-			case 0:
-				// Reading from buttons
-				//ioctl(fd, RD_PBUTTONS);
-				//read(fd, &buttons, 1);
-				
-				if (buttons == 0b1110)
-				{
-					window.clear(sf::Color::Green);
-					screen = 2;
-
-					data = 0b0001;
-					//ioctl(fd, WR_RED_LEDS);
-					//write(fd, &data, sizeof(data));
-				}
-				break;
-
 			case 1:
+				//reset all
+				data = 0x0;
+				writeLDisplay(fd, data);
+				writeRDisplay(fd, data);
+				writeGreenLed(fd, data);
+				writeRedLed(fd, data);
+
 				// text appering
 				
 				elapsedtime_text += clock_text.restart();
@@ -376,9 +366,11 @@ int main(int argc, char **argv)
 						if (temp_time >= sf::seconds(5.0f))
 						{
 							screen = 2;
+							data = 0xFFFFFFFF;
+							writeRDisplay(fd, data);
 
 							text.setString("");
-							typedtext.insert(0, "Voce deveria saber matematica");
+							typedtext.insert(0, "[root@mbois ~] $ Voce deveria saber matematica...");
 
 							clock_text.restart();
 							clock_bomb.restart();
@@ -404,12 +396,14 @@ int main(int argc, char **argv)
 
 				// fpga and program logic
 
-				data = 0xC0C0B082;
+				data = 0x90F999A4;
 				writeRDisplay(fd, data);
 				switches = readSwitch(fd, switches);
 
-				if (switches == 0x24) // 36 em hexa
+				if (switches == 0x23B6) // 9142 em hexa
 				{
+					data = 0x0;
+					writeRDisplay(fd, data);
 					text.setString("");
 					typedtext.insert(0, "Isso faz algum sentido?");
 					screen = 3;
@@ -460,11 +454,12 @@ int main(int argc, char **argv)
 				// Answer: 001 010 101 000 010 101 (0x0AA15)
 				if(switches == 0x0AA15){
 					text.setString("");
-					typedtext.insert(0, "Quarta fase");
+					typedtext.insert(0, "Tem alguma coisa piscando,\nvoce deveria prestar atencao");
 					screen = 4;
 					temp_clock.restart();
 					i = 0;
 					flag = 1;
+					old_button = 0xF;
 
 					writeGreenLed(fd, 0x0);
 				}
@@ -489,7 +484,7 @@ int main(int argc, char **argv)
 
 				// Compare old state with current one to create a mask
 				unsigned int mask = switches ^ oldSwitches;
-				printf("mask: %p\n", mask);
+				//printf("mask: %p\n", mask);
 
 				if(mask != 0){
 					for (int i = 5; i >= 0; i--)
@@ -530,7 +525,7 @@ int main(int argc, char **argv)
 						}
 					}
 
-					printf("redLeds: %p\n", redLeds);
+					//printf("redLeds: %p\n", redLeds);
 					writeRedLed(fd, redLeds);
 					
 					oldSwitches = redLeds;
@@ -552,52 +547,73 @@ int main(int argc, char **argv)
 			}
 			case 4:{
 				//screen interface
-
+				elapsedtime_text += clock_text.restart();
+				while (elapsedtime_text >= sf::seconds(.1f))
+				{
+					elapsedtime_text -= sf::seconds(.1f);
+					if (typedtext.getSize() > 0)
+					{
+						text.setString(text.getString() + typedtext[0]);
+						typedtext = typedtext.toAnsiString().substr(1);
+					}
+				}
+				window.draw(text);
 
 				// Genius
 				
-				int seqGreenLeds[4] = {16, 4, 64, 1}; // 2^4, 2^2, 2^6, 2^0
+				int seqGreenLeds[BUTTON_AMOUNT] = {48, 12, 192, 48, 3, 48}; // 2^4+2^5, 2^2+2^3, 2^6+2^7, 2^0+2^1
 				
 
 				temp_time = temp_clock.getElapsedTime();
-				if(temp_time >= sf::seconds(1.5f) && i < 4 && flag){
+				if(temp_time >= sf::seconds(3.0f) && i < BUTTON_AMOUNT && flag){
 					temp_clock.restart();
 					writeGreenLed(fd, seqGreenLeds[i]);
 					i++;
 				}
-				else if (i >= 4 && flag && temp_time >= sf::seconds(1.5f)){
+				else if (i >= BUTTON_AMOUNT && flag && temp_time >= sf::seconds(3.0f)){
 					flag = 0;
 					writeGreenLed(fd, 0x0);
 					i = 0;
 				}
 
-				int answer[4] = {0xB, 0xD, 0x7, 0xE}; // 11, 13, 7, 14
-				int input[4];
+				int answer[BUTTON_AMOUNT] = {11, 13, 7, 11, 14, 11}; // 0xB, 0xD, 0x7, 0xE
 				int button = readButton(fd, button);
-				int old_button = 0xF;
+				
 
-				if(button != 0xF && button != old_button && j < 4){
+				if(button != 0xF && button != old_button && j < BUTTON_AMOUNT){
 					old_button = button;
 					input[j] = button;
+					
 					j++;
 				}
 
-				
-				if (j >= 4){
-					char *str;
-					sprintf(str, "%d %d %d %d", input[3], input[2], input[1], input[0]);
-					text.setString(str);
-					window.draw(text);
-					window.display();
-					for (int k = 0; k < 4; k++){
+
+				if (j >= BUTTON_AMOUNT){
+					printf("%d %d %d %d %d %d\n", input[0], input[1], input[2], input[3], input[4], input[5]);
+					//char *str;
+					//sprintf(str, "%d %d %d %d", input[3], input[2], input[1], input[0]);
+					//text.setString(str);
+					//window.draw(text);
+					//window.display();
+					for (int k = 0; k < BUTTON_AMOUNT; k++){
 						if(answer[k] != input[k]){
+							printf("\n%d %d", answer[k], input[k]);
 							screen = 6;
+							printf("errou\n");
 							text.setString("");
 							typedtext.insert(0, "BOOM!!!");
+
+							flag_correct = 0;
 
 							clock_text.restart();
 							break;
 						}
+					}
+					if(flag_correct){
+						screen = 5;
+						text.setString("");
+						typedtext.insert(0, "Quinta fase");
+						clock_text.restart();
 					}
 				}
 				
