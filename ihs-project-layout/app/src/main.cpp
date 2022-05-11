@@ -337,10 +337,26 @@ redSquare18.setPosition(420.f, 330.f);
 
 	sf::Music typing;
 
-	if (!typing.openFromFile("/home/de2i-150/Desktop/Projeto-IHS/IHS-Project/ihs-project-layout/app/assets/sounds/typing.ogg"))
+	if (!typing.openFromFile("/home/de2i-150/Desktop/Projeto-IHS/IHS-Project/ihs-project-layout/app/assets/sounds/typing.wav"))
 	{
 		cout << "Error during audio file import" << endl;
 	}
+
+	sf::Music clock_time;
+
+	if (!clock_time.openFromFile("/home/de2i-150/Desktop/Projeto-IHS/IHS-Project/ihs-project-layout/app/assets/sounds/clock.ogg"))
+	{
+		cout << "Error during audio file import" << endl;
+	}
+
+
+	sf::Music boom;
+
+	if (!boom.openFromFile("/home/de2i-150/Desktop/Projeto-IHS/IHS-Project/ihs-project-layout/app/assets/sounds/boom.wav"))
+	{
+		cout << "Error during audio file import" << endl;
+	}
+
 
 	// to use this music file uncomment the code bellow
 	// typing.play();
@@ -374,6 +390,8 @@ redSquare18.setPosition(420.f, 330.f);
 	int flag = 1;
 	int flag_correct = 1;
 	int input[BUTTON_AMOUNT];
+	bool flag_typing = false;
+	bool flag_clock = false;
 
 
 	unsigned int seconds;
@@ -397,7 +415,8 @@ redSquare18.setPosition(420.f, 330.f);
 		window.clear(sf::Color(48, 49, 52));
 
 		if(screen == 0){
-			typing.play();
+			if (!flag_typing) { typing.play(); }
+			typing.setLoop(true);
 			screen = 1;
 		}
 
@@ -416,6 +435,12 @@ redSquare18.setPosition(420.f, 330.f);
 
 				clock_text.restart();
 			}
+
+			if (seconds > 0 && seconds == 8)
+			{
+				typing.stop();
+				boom.play();
+			}
 		}
 
 		switch (screen) {
@@ -430,9 +455,9 @@ redSquare18.setPosition(420.f, 330.f);
 				// text appering
 				
 				elapsedtime_text += clock_text.restart();
-				while (elapsedtime_text >= sf::seconds(.001f))
+				while (elapsedtime_text >= sf::seconds(.1f))
 				{
-					elapsedtime_text -= sf::seconds(.001f);
+					elapsedtime_text -= sf::seconds(.1f);
 					if (typedtext.getSize() > 0)
 					{
 						text.setString(text.getString() + typedtext[0]);
@@ -443,6 +468,14 @@ redSquare18.setPosition(420.f, 330.f);
 					//when text ends, screen needs to change
 					else
 					{
+
+						if (!flag_clock) { 
+							typing.stop();
+							clock_time.play(); 
+							clock_time.setLoop(true);
+							flag_clock = true;
+						}
+						
 						temp_time = temp_clock.getElapsedTime();
 						//wait 5 seconds to go to screen 2
 
@@ -474,6 +507,14 @@ redSquare18.setPosition(420.f, 330.f);
 						text.setString(text.getString() + typedtext[0]);
 						typedtext = typedtext.toAnsiString().substr(1);
 					}
+					else {
+						if (!flag_clock) { 
+							typing.stop();
+							clock_time.play(); 
+							clock_time.setLoop(true);
+							flag_clock = true;
+						}
+					}
 				}
 				window.draw(text);
 
@@ -504,6 +545,13 @@ redSquare18.setPosition(420.f, 330.f);
 					{
 						text.setString(text.getString() + typedtext[0]);
 						typedtext = typedtext.toAnsiString().substr(1);
+					} else {
+						if (!flag_clock) { 
+							typing.stop();
+							clock_time.play(); 
+							clock_time.setLoop(true);
+							flag_clock = true;
+						}
 					}
 				}
 				window.draw(text);
@@ -554,6 +602,13 @@ redSquare18.setPosition(420.f, 330.f);
 					if (typedtext.getSize() > 0){
 						text.setString(text.getString() + typedtext[0]);
 						typedtext = typedtext.toAnsiString().substr(1);
+					} else {
+						if (!flag_clock) { 
+							typing.stop();
+							clock_time.play(); 
+							clock_time.setLoop(true);
+							flag_clock = true;
+						}
 					}
 				}
 				window.draw(text);
@@ -692,6 +747,14 @@ redSquare18.setPosition(420.f, 330.f);
 						text.setString(text.getString() + typedtext[0]);
 						typedtext = typedtext.toAnsiString().substr(1);
 					}
+					else {
+						if (!flag_clock) { 
+							typing.stop();
+							clock_time.play(); 
+							clock_time.setLoop(true);
+							flag_clock = true;
+						}
+					}
 				}
 				window.draw(text);
 
@@ -766,6 +829,13 @@ redSquare18.setPosition(420.f, 330.f);
 					{
 						text.setString(text.getString() + typedtext[0]);
 						typedtext = typedtext.toAnsiString().substr(1);
+					} else {
+						if (!flag_clock) { 
+							typing.stop();
+							clock_time.play(); 
+							clock_time.setLoop(true);
+							flag_clock = true;
+						}
 					}
 				}
 				window.draw(text);
@@ -782,6 +852,13 @@ redSquare18.setPosition(420.f, 330.f);
 					{
 						text.setString(text.getString() + typedtext[0]);
 						typedtext = typedtext.toAnsiString().substr(1);
+					} else {
+						if (!flag_clock) { 
+							typing.stop();
+							clock_time.play(); 
+							clock_time.setLoop(true);
+							flag_clock = true;
+						}
 					}
 				}
 				window.draw(text);
