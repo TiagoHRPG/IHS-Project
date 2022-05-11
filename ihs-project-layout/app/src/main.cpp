@@ -271,9 +271,9 @@ int main(int argc, char **argv)
 	// to use this music file uncomment the code bellow
 	// typing.play();
 
-	sf::String typedtext = "[root@mbois ~] $ Ola, vejo que voce encontrou minha caixa...\n\n[root@mbois ~] $ Espero (ou nao) que voce consiga completar\nos desafios que preparei para hoje.\n\n[root@mbois ~] $ Mas cuidado com o tempo e tente nao perder\na cabeca!!\n\n[root@mbois ~] $ ASS ?";
+	sf::String typedtext = "[root@bois ~] $ Ola, vejo que voce encontrou minha caixa...\n\n[root@bois ~] $ Espero (ou nao) que voce consiga completar\nos desafios que preparei para hoje.\n\n[root@bois ~] $ Mas cuidado com o tempo e tente nao perder\na cabeca!!\n\n[root@bois ~] $ ASS ?";
 
-	sf::String challenge1_string = "[root@mbois ~] $ Voce deveria saber matematica";
+	sf::String challenge1_string = "[root@bois ~] $ Voce deveria saber matematica";
 
 	//time variables
 	sf::Clock clock_text;
@@ -381,7 +381,7 @@ int main(int argc, char **argv)
 							writeRDisplay(fd, data);
 
 							text.setString("");
-							typedtext.insert(0, "[root@mbois ~] $ Voce deveria saber matematica...");
+							typedtext.insert(0, "[root@bois ~] $ Voce deveria saber matematica...");
 
 							clock_text.restart();
 							clock_bomb.restart();
@@ -416,7 +416,7 @@ int main(int argc, char **argv)
 					data = 0x0;
 					writeRDisplay(fd, data);
 					text.setString("");
-					typedtext.insert(0, "[root@mbois ~] $ Isso faz algum sentido?");
+					typedtext.insert(0, "[root@bois ~] $ Isso faz algum sentido?");
 					screen = 3;
 					window.clear();
 				}
@@ -465,7 +465,7 @@ int main(int argc, char **argv)
 				// Answer: 001 010 101 000 010 101 (0x0AA15)
 				if(switches == 0x0AA15){
 					text.setString("");
-					typedtext.insert(0, "[root@mbois ~] $ Tem alguma coisa piscando\n\n[root@mbois ~] $ voce deveria prestar atencao");
+					typedtext.insert(0, "[root@bois ~] $ Tem alguma coisa piscando\n\n[root@bois ~] $ voce deveria prestar atencao");
 					screen = 4;
 					temp_clock.restart();
 					i = 0;
