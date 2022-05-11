@@ -476,21 +476,20 @@ int main(int argc, char **argv)
 				}
 				break;
 			
-			case 5:
+			case 4:
 			{
 				//screen interface
 				elapsedtime_text += clock_text.restart();
-				while (elapsedtime_text >= sf::seconds(.1f))
-				{
+				while (elapsedtime_text >= sf::seconds(.1f)){
 					elapsedtime_text -= sf::seconds(.1f);
-					if (typedtext.getSize() > 0)
-					{
+					if (typedtext.getSize() > 0){
 						text.setString(text.getString() + typedtext[0]);
 						typedtext = typedtext.toAnsiString().substr(1);
 					}
 				}
 				window.draw(text);
 
+				oldSwitches = switches;
 				switches = readSwitch(fd, switches);
 
 				// Compare old state with current one to create a mask
@@ -498,16 +497,13 @@ int main(int argc, char **argv)
 				//printf("mask: %p\n", mask);
 
 				if(mask != 0){
-					for (int i = 5; i >= 0; i--)
-					{
-						for (int j = 2; j >= 0; j--)
-						{
+					for (int i = 5; i >= 0; i--){
+						for (int j = 2; j >= 0; j--){
 							temp = (mask % 2);
 							mask = mask >> 1;
 
 							// The mask will diffuse itself to surrounding cells, inverting them
-							if (temp == 1)
-							{
+							if (temp == 1){
 								currMatrix[i*3 + j] ^= 1;
 								if (i > 0) // up
 									currMatrix[(i - 1) * 3 + j] ^= 1;
@@ -523,40 +519,30 @@ int main(int argc, char **argv)
 
 					// Save current matrix state for next iteration and pass it to red leds
 					redLeds = 0x00000;
-					int pot = 0;
+					int k = 1;
 					
-					for (int i = 5; i >= 0; i--)
-					{
-						for (int j = 2; j >= 0; j--)
-						{
-							pot = 17 - (i * 3 + j); // The number to elevate 2 by
-							for(int m = 1; m <= pot; ++m)
-								redLeds += currMatrix[i * 3 + j] * m;
-
+					for (int i = 5; i >= 0; i--){
+						for (int j = 2; j >= 0; j--){
+							redLeds += currMatrix[i*3 + j] * k;
+							k *= 2;
 						}
 					}
 
 					//printf("redLeds: %p\n", redLeds);
 					writeRedLed(fd, redLeds);
-					
-					oldSwitches = redLeds;
 				}
-
 
 				/*
 					TODO: pass matrix to screen
-					*/
+				*/
 
-				if (switches == 0x3FFFF)
-				{ // All on
+				if (redLeds == 0x3FFFF){ // All on
 					window.clear(sf::Color::Green);
 					screen = 5;
-
-					// writeGreenLed(fd, 0b1111);
 				}
 				break;
 			}
-			case 4:{
+			case 5:{
 				//screen interface
 				elapsedtime_text += clock_text.restart();
 				while (elapsedtime_text >= sf::seconds(.1f))
