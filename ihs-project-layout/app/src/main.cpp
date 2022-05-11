@@ -25,6 +25,8 @@ using namespace std;
 
 #define BUTTON_AMOUNT 6
 
+#define RED sf::Color(254, 0, 0)
+#define GREEN sf::Color(108, 222, 153)
 
 string char_to_stringbit(char n)
 {
@@ -149,107 +151,179 @@ void int_to_string(int fd, int number, string &min_string, string &sec_string)
 
 int main(int argc, char **argv)
 {
-	int fd, retval;
-	if(argc < 2){
-		printf("Syntax: %s <device file path>\n", argv[0]);
-		return -EINVAL;
-	}
+int fd, retval;
+if(argc < 2){
+	printf("Syntax: %s <device file path>\n", argv[0]);
+	return -EINVAL;
+}
 
-	if((fd = open(argv[1], O_RDWR)) < 0){
-		fprintf(stderr, "Error opening file %s\n", argv[1]);
-		return -EBUSY;
-	}
+if((fd = open(argv[1], O_RDWR)) < 0){
+	fprintf(stderr, "Error opening file %s\n", argv[1]);
+	return -EBUSY;
+}
 
-	// window setup
-	sf::VideoMode videomode(800, 600);
-	sf::RenderWindow window(videomode, "Project IHS", sf::Style::Titlebar | sf::Style::Default); //close button and not resizable
+// window setup
+sf::VideoMode videomode(800, 600);
+sf::RenderWindow window(videomode, "Project IHS", sf::Style::Titlebar | sf::Style::Default); //close button and not resizable
 
-	// shapes
-	sf::CircleShape square1(30, 4);
-	square1.setFillColor(sf::Color(108, 222, 153));
-	square1.setPosition(20.f, 50.f);
+// shapes
+sf::CircleShape greenSquare1(30, 4);
+greenSquare1.setFillColor(GREEN);
+greenSquare1.setPosition(20.f, 50.f);
 
-	sf::CircleShape square2(30, 4);
-	square2.setFillColor(sf::Color(108, 222, 153));
-	square2.setPosition(100.f, 50.f);
+sf::CircleShape redSquare1(30, 4);
+redSquare1.setFillColor(RED);
+redSquare1.setPosition(20.f, 50.f);
 
-	sf::CircleShape square3(30, 4);
-	square3.setFillColor(sf::Color(254, 0, 0));
-	square3.setPosition(180.f, 50.f);
+sf::CircleShape greenSquare2(30, 4);
+greenSquare2.setFillColor(GREEN);
+greenSquare2.setPosition(100.f, 50.f);
 
-	/*---*/
+sf::CircleShape redSquare2(30, 4);
+redSquare2.setFillColor(RED);
+redSquare2.setPosition(100.f, 50.f);
 
-	sf::CircleShape square4(30, 4);
-	square4.setFillColor(sf::Color(108, 222, 153));
-	square4.setPosition(260.f, 50.f);
+sf::CircleShape greenSquare3(30, 4);
+greenSquare3.setFillColor(GREEN);
+greenSquare3.setPosition(180.f, 50.f);
 
-	sf::CircleShape square5(30, 4);
-	square5.setFillColor(sf::Color(254, 0, 0));
-	square5.setPosition(340.f, 50.f);
+sf::CircleShape redSquare3(30, 4);
+redSquare3.setFillColor(RED);
+redSquare3.setPosition(180.f, 50.f);
 
-	sf::CircleShape square6(30, 4);
-	square6.setFillColor(sf::Color(108, 222, 153));
-	square6.setPosition(420.f, 50.f);
+/*---*/
 
+sf::CircleShape greenSquare4(30, 4);
+greenSquare4.setFillColor(GREEN);
+greenSquare4.setPosition(260.f, 50.f);
 
-	/*---*/
+sf::CircleShape redSquare4(30, 4);
+redSquare4.setFillColor(RED);
+redSquare4.setPosition(260.f, 50.f);
 
-	sf::CircleShape square7(30, 4);
-	square7.setFillColor(sf::Color(254, 0, 0));
-	square7.setPosition(20.f, 190.f);
+sf::CircleShape greenSquare5(30, 4);
+greenSquare5.setFillColor(GREEN);
+greenSquare5.setPosition(340.f, 50.f);
 
-	sf::CircleShape square8(30, 4);
-	square8.setFillColor(sf::Color(108, 222, 153));
-	square8.setPosition(100.f, 190.f);
+sf::CircleShape redSquare5(30, 4);
+redSquare5.setFillColor(RED);
+redSquare5.setPosition(340.f, 50.f);
 
-	sf::CircleShape square9(30, 4);
-	square9.setFillColor(sf::Color(254, 0, 0));
-	square9.setPosition(180.f, 190.f);
+sf::CircleShape greenSquare6(30, 4);
+greenSquare6.setFillColor(GREEN);
+greenSquare6.setPosition(420.f, 50.f);
 
-
-	/*---*/
-
-	sf::CircleShape square10(30, 4);
-	square10.setFillColor(sf::Color(108, 222, 153));
-	square10.setPosition(260.f, 190.f);
-
-	sf::CircleShape square11(30, 4);
-	square11.setFillColor(sf::Color(108, 222, 153));
-	square11.setPosition(340.f, 190.f);
-
-	sf::CircleShape square12(30, 4);
-	square12.setFillColor(sf::Color(108, 222, 153));
-	square12.setPosition(420.f, 190.f);
+sf::CircleShape redSquare6(30, 4);
+redSquare6.setFillColor(RED);
+redSquare6.setPosition(420.f, 50.f);
 
 
-	/*---*/
+/*---*/
 
-	sf::CircleShape square13(30, 4);
-	square13.setFillColor(sf::Color(108, 222, 153));
-	square13.setPosition(20.f, 330.f);
+sf::CircleShape greenSquare7(30, 4);
+greenSquare7.setFillColor(GREEN);
+greenSquare7.setPosition(20.f, 190.f);
 
-	sf::CircleShape square14(30, 4);
-	square14.setFillColor(sf::Color(254, 0, 0));
-	square14.setPosition(100.f, 330.f);
+sf::CircleShape redSquare7(30, 4);
+redSquare7.setFillColor(RED);
+redSquare7.setPosition(20.f, 190.f);
 
-	sf::CircleShape square15(30, 4);
-	square15.setFillColor(sf::Color(108, 222, 153));
-	square15.setPosition(180.f, 330.f);
+sf::CircleShape greenSquare8(30, 4);
+greenSquare8.setFillColor(GREEN);
+greenSquare8.setPosition(100.f, 190.f);
+
+sf::CircleShape	redSquare8(30, 4);
+redSquare8.setFillColor(RED);
+redSquare8.setPosition(100.f, 190.f);
+
+sf::CircleShape greenSquare9(30, 4);
+greenSquare9.setFillColor(GREEN);
+greenSquare9.setPosition(180.f, 190.f);
+
+sf::CircleShape redSquare9(30, 4);
+redSquare9.setFillColor(RED);
+redSquare9.setPosition(180.f, 190.f);
 
 
-	/*---*/
+/*---*/
 
-	sf::CircleShape square16(30, 4);
-	square16.setFillColor(sf::Color(254, 0, 0));
-	square16.setPosition(260.f, 330.f);
+sf::CircleShape greenSquare10(30, 4);
+greenSquare10.setFillColor(GREEN);
+greenSquare10.setPosition(260.f, 190.f);
 
-	sf::CircleShape square17(30, 4);
-	square17.setFillColor(sf::Color(108, 222, 153));
-	square17.setPosition(340.f, 330.f);
+sf::CircleShape redSquare10(30, 4);
+redSquare10.setFillColor(RED);
+redSquare10.setPosition(260.f, 190.f);
 
-	sf::CircleShape square18(30, 4);
-	square18.setFillColor(sf::Color(254, 0, 0));
-	square18.setPosition(420.f, 330.f);
+sf::CircleShape greenSquare11(30, 4);
+greenSquare11.setFillColor(GREEN);
+greenSquare11.setPosition(340.f, 190.f);
+
+sf::CircleShape redSquare11(30, 4);
+redSquare11.setFillColor(RED);
+redSquare11.setPosition(340.f, 190.f);
+
+sf::CircleShape greenSquare12(30, 4);
+greenSquare12.setFillColor(GREEN);
+greenSquare12.setPosition(420.f, 190.f);
+
+sf::CircleShape redSquare12(30, 4);
+redSquare12.setFillColor(RED);
+redSquare12.setPosition(420.f, 190.f);
+
+
+/*---*/
+
+sf::CircleShape greenSquare13(30, 4);
+greenSquare13.setFillColor(GREEN);
+greenSquare13.setPosition(20.f, 330.f);
+
+sf::CircleShape redSquare13(30, 4);
+redSquare13.setFillColor(RED);
+redSquare13.setPosition(20.f, 330.f);
+
+sf::CircleShape greenSquare14(30, 4);
+greenSquare14.setFillColor(GREEN);
+greenSquare14.setPosition(100.f, 330.f);
+
+sf::CircleShape redSquare14(30, 4);
+redSquare14.setFillColor(RED);
+redSquare14.setPosition(100.f, 330.f);
+
+sf::CircleShape greenSquare15(30, 4);
+greenSquare15.setFillColor(GREEN);
+greenSquare15.setPosition(180.f, 330.f);
+
+sf::CircleShape redSquare15(30, 4);
+redSquare15.setFillColor(RED);
+redSquare15.setPosition(180.f, 330.f);
+
+
+/*---*/
+
+sf::CircleShape greenSquare16(30, 4);
+greenSquare16.setFillColor(GREEN);
+greenSquare16.setPosition(260.f, 330.f);
+
+sf::CircleShape redSquare16(30, 4);
+redSquare16.setFillColor(RED);
+redSquare16.setPosition(260.f, 330.f);
+
+sf::CircleShape greenSquare17(30, 4);
+greenSquare17.setFillColor(GREEN);
+greenSquare17.setPosition(340.f, 330.f);
+
+sf::CircleShape redSquare17(30, 4);
+redSquare17.setFillColor(RED);
+redSquare17.setPosition(340.f, 330.f);
+
+sf::CircleShape greenSquare18(30, 4);
+greenSquare18.setFillColor(GREEN);
+greenSquare18.setPosition(420.f, 330.f);
+
+sf::CircleShape redSquare18(30, 4);
+redSquare18.setFillColor(RED);
+redSquare18.setPosition(420.f, 330.f);
 
 
 	window.setFramerateLimit(12);
@@ -437,24 +511,24 @@ int main(int argc, char **argv)
 				window.draw(text);
 
 				// shapes
-				window.draw(square1);
-				window.draw(square2);
-				window.draw(square3);
-				window.draw(square4);
-				window.draw(square5);
-				window.draw(square6);
-				window.draw(square7);
-				window.draw(square8);
-				window.draw(square9);
-				window.draw(square10);
-				window.draw(square11);
-				window.draw(square12);
-				window.draw(square13);
-				window.draw(square14);
-				window.draw(square15);
-				window.draw(square16);
-				window.draw(square17);
-				window.draw(square18);
+				window.draw(greenSquare1);
+				window.draw(greenSquare2);
+				window.draw(redSquare3);
+				window.draw(greenSquare4);
+				window.draw(redSquare5);
+				window.draw(greenSquare6);
+				window.draw(redSquare7);
+				window.draw(greenSquare8);
+				window.draw(redSquare9);
+				window.draw(greenSquare10);
+				window.draw(greenSquare11);
+				window.draw(greenSquare12);
+				window.draw(greenSquare13);
+				window.draw(redSquare14);
+				window.draw(greenSquare15);
+				window.draw(redSquare16);
+				window.draw(greenSquare17);
+				window.draw(redSquare18);
 				
 				//fpga and program logic
 
@@ -532,9 +606,60 @@ int main(int argc, char **argv)
 					writeRedLed(fd, redLeds);
 				}
 
-				/*
-					TODO: pass matrix to screen
-				*/
+				// draw matrix on screen
+				if(currMatrix[0] == 1) window.draw(greenSquare1);
+				else window.draw(redSquare1);
+
+				if(currMatrix[1] == 1) window.draw(greenSquare2);
+				else window.draw(redSquare2);
+
+				if(currMatrix[2] == 1) window.draw(greenSquare3);
+				else window.draw(redSquare3);
+
+				if(currMatrix[3] == 1) window.draw(greenSquare4);
+				else window.draw(redSquare4);
+
+				if(currMatrix[4] == 1) window.draw(greenSquare5);
+				else window.draw(redSquare5);
+
+				if(currMatrix[5] == 1) window.draw(greenSquare6);
+				else window.draw(redSquare6);
+
+				if(currMatrix[6] == 1) window.draw(greenSquare7);
+				else window.draw(redSquare7);
+
+				if(currMatrix[7] == 1) window.draw(greenSquare8);
+				else window.draw(redSquare8);
+
+				if(currMatrix[8] == 1) window.draw(greenSquare9);
+				else window.draw(redSquare9);
+
+				if(currMatrix[9] == 1) window.draw(greenSquare10);
+				else window.draw(redSquare10);
+
+				if(currMatrix[10] == 1) window.draw(greenSquare11);
+				else window.draw(redSquare11);
+
+				if(currMatrix[11] == 1) window.draw(greenSquare12);
+				else window.draw(redSquare12);
+
+				if(currMatrix[12] == 1) window.draw(greenSquare13);
+				else window.draw(redSquare13);
+
+				if(currMatrix[13] == 1) window.draw(greenSquare14);
+				else window.draw(redSquare14);
+
+				if(currMatrix[14] == 1) window.draw(greenSquare15);
+				else window.draw(redSquare15);
+
+				if(currMatrix[15] == 1) window.draw(greenSquare16);
+				else window.draw(redSquare16);
+
+				if(currMatrix[16] == 1) window.draw(greenSquare17);
+				else window.draw(redSquare17);
+
+				if(currMatrix[17] == 1) window.draw(greenSquare18);
+				else window.draw(redSquare18);
 
 				redLeds %= 0x40000;
 
