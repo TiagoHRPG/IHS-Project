@@ -151,7 +151,7 @@ void int_to_string(int fd, int number, string &min_string, string &sec_string)
 
 int main(int argc, char **argv)
 {
-int fd, retval;
+int fd;
 if(argc < 2){
 	printf("Syntax: %s <device file path>\n", argv[0]);
 	return -EINVAL;
@@ -366,8 +366,6 @@ redSquare18.setPosition(420.f, 330.f);
 	unsigned int data = 0x40404079;
 	unsigned int switches = 0x00000;
 	unsigned int oldSwitches = 0x0AA15;
-	unsigned int buttons = 0x0;
-	unsigned int greenLeds = 0x0;
 	unsigned int redLeds = 0x00000;
 
 	unsigned int temp;
@@ -381,7 +379,7 @@ redSquare18.setPosition(420.f, 330.f);
 	unsigned int seconds;
 	string sec_string, min_string;
 
-	int currMatrix[18];
+	int currMatrix[18] = {0};
 
 	//app loop
 	while (window.isOpen())
@@ -539,14 +537,11 @@ redSquare18.setPosition(420.f, 330.f);
 				// Answer: 001 010 101 000 010 101 (0x0AA15)
 				if(switches == 0x0AA15){
 					text.setString("");
-					typedtext.insert(0, "[root@bois ~] $ Tem alguma coisa piscando\n\n[root@bois ~] $ voce deveria prestar atencao");
+					typedtext.insert(0, "[root@bois ~] $ Sobrecarga no sistema pode ate ser boa");
 					screen = 4;
 					temp_clock.restart();
-					i = 0;
-					flag = 1;
-					old_button = 0xF;
 
-					writeGreenLed(fd, 0x0);
+					writeRedLed(fd, 0x00000);
 				}
 				break;
 			
@@ -602,7 +597,6 @@ redSquare18.setPosition(420.f, 330.f);
 						}
 					}
 
-					//printf("redLeds: %p\n", redLeds);
 					writeRedLed(fd, redLeds);
 				}
 
@@ -610,52 +604,52 @@ redSquare18.setPosition(420.f, 330.f);
 				if(currMatrix[0] == 1) window.draw(greenSquare1);
 				else window.draw(redSquare1);
 
-				if(currMatrix[1] == 1) window.draw(greenSquare2);
+				if(currMatrix[3] == 1) window.draw(greenSquare2);
 				else window.draw(redSquare2);
 
-				if(currMatrix[2] == 1) window.draw(greenSquare3);
+				if(currMatrix[6] == 1) window.draw(greenSquare3);
 				else window.draw(redSquare3);
 
-				if(currMatrix[3] == 1) window.draw(greenSquare4);
+				if(currMatrix[9] == 1) window.draw(greenSquare4);
 				else window.draw(redSquare4);
 
-				if(currMatrix[4] == 1) window.draw(greenSquare5);
+				if(currMatrix[12] == 1) window.draw(greenSquare5);
 				else window.draw(redSquare5);
 
-				if(currMatrix[5] == 1) window.draw(greenSquare6);
+				if(currMatrix[15] == 1) window.draw(greenSquare6);
 				else window.draw(redSquare6);
 
-				if(currMatrix[6] == 1) window.draw(greenSquare7);
+				if(currMatrix[1] == 1) window.draw(greenSquare7);
 				else window.draw(redSquare7);
 
-				if(currMatrix[7] == 1) window.draw(greenSquare8);
+				if(currMatrix[4] == 1) window.draw(greenSquare8);
 				else window.draw(redSquare8);
 
-				if(currMatrix[8] == 1) window.draw(greenSquare9);
+				if(currMatrix[7] == 1) window.draw(greenSquare9);
 				else window.draw(redSquare9);
 
-				if(currMatrix[9] == 1) window.draw(greenSquare10);
+				if(currMatrix[10] == 1) window.draw(greenSquare10);
 				else window.draw(redSquare10);
 
-				if(currMatrix[10] == 1) window.draw(greenSquare11);
+				if(currMatrix[13] == 1) window.draw(greenSquare11);
 				else window.draw(redSquare11);
 
-				if(currMatrix[11] == 1) window.draw(greenSquare12);
+				if(currMatrix[16] == 1) window.draw(greenSquare12);
 				else window.draw(redSquare12);
 
-				if(currMatrix[12] == 1) window.draw(greenSquare13);
+				if(currMatrix[2] == 1) window.draw(greenSquare13);
 				else window.draw(redSquare13);
 
-				if(currMatrix[13] == 1) window.draw(greenSquare14);
+				if(currMatrix[5] == 1) window.draw(greenSquare14);
 				else window.draw(redSquare14);
 
-				if(currMatrix[14] == 1) window.draw(greenSquare15);
+				if(currMatrix[8] == 1) window.draw(greenSquare15);
 				else window.draw(redSquare15);
 
-				if(currMatrix[15] == 1) window.draw(greenSquare16);
+				if(currMatrix[11] == 1) window.draw(greenSquare16);
 				else window.draw(redSquare16);
 
-				if(currMatrix[16] == 1) window.draw(greenSquare17);
+				if(currMatrix[14] == 1) window.draw(greenSquare17);
 				else window.draw(redSquare17);
 
 				if(currMatrix[17] == 1) window.draw(greenSquare18);
@@ -663,10 +657,28 @@ redSquare18.setPosition(420.f, 330.f);
 
 				redLeds %= 0x40000;
 
+				// Solution: 00 0111 1011 0111 1000
+				// 1 indicates a modified switch
+
 				if (redLeds == 0x3FFFF){ // All on
-					window.clear(sf::Color::Green);
+					text.setString("");
+					typedtext.insert(0, "[root@bois ~] $ Tem alguma coisa piscando\n\n[root@bois ~] $ voce deveria prestar atencao");
 					screen = 5;
+					temp_clock.restart();
+					i = 0;
+					flag = 1;
+					old_button = 0xF;
+
+					writeGreenLed(fd, 0x0);
 				}
+
+				for(int i = 0; i < 6; i++){
+					for(int j = 0; j < 3; j++){
+						printf("%d ", currMatrix[3*i + j]);
+					}
+					printf("\n");
+				}
+
 				break;
 			}
 			case 5:{
@@ -714,18 +726,13 @@ redSquare18.setPosition(420.f, 330.f);
 
 				if (j >= BUTTON_AMOUNT){
 					printf("%d %d %d %d %d %d\n", input[0], input[1], input[2], input[3], input[4], input[5]);
-					//char *str;
-					//sprintf(str, "%d %d %d %d", input[3], input[2], input[1], input[0]);
-					//text.setString(str);
-					//window.draw(text);
-					//window.display();
 					for (int k = 0; k < BUTTON_AMOUNT; k++){
 						if(answer[k] != input[k]){
 							printf("\n%d %d", answer[k], input[k]);
 							screen = 6;
 							printf("errou\n");
 							text.setString("");
-							typedtext.insert(0, "BOOM!!!");
+							typedtext.insert(0, "[root@bois ~] $ Nao foi dessa vez, tente de novo se\n voce tiver sobrevivido :)\n[root@bois ~] $ ???????\n[root@bois ~] $ ???????\n[root@bois ~] $ ???????\n[root@bois ~] $ ???????");
 
 							flag_correct = 0;
 
@@ -734,9 +741,9 @@ redSquare18.setPosition(420.f, 330.f);
 						}
 					}
 					if(flag_correct){
-						screen = 5;
+						screen = 7;
 						text.setString("");
-						typedtext.insert(0, "Quarta fase");
+						typedtext.insert(0, "[root@bois ~] $ Parabens, dessa vez nada foi pelos ares, \nquem sabe na proxima :(");
 						clock_text.restart();
 					}
 				}
@@ -763,6 +770,25 @@ redSquare18.setPosition(420.f, 330.f);
 				}
 				window.draw(text);
 				break;
+
+			case 7:
+
+				//screen interface
+				elapsedtime_text += clock_text.restart();
+				while (elapsedtime_text >= sf::seconds(.1f))
+				{
+					elapsedtime_text -= sf::seconds(.1f);
+					if (typedtext.getSize() > 0)
+					{
+						text.setString(text.getString() + typedtext[0]);
+						typedtext = typedtext.toAnsiString().substr(1);
+					}
+				}
+				window.draw(text);
+
+				break;
+
+
 
 			default:
 				break;
