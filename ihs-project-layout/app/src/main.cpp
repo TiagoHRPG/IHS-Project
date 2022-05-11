@@ -536,6 +536,8 @@ int main(int argc, char **argv)
 					TODO: pass matrix to screen
 				*/
 
+				redLeds %= 0x40000;
+
 				if (redLeds == 0x3FFFF){ // All on
 					window.clear(sf::Color::Green);
 					screen = 5;
